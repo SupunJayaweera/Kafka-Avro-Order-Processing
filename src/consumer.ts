@@ -1,7 +1,12 @@
-import { Kafka, Consumer, EachMessagePayload, logLevel } from 'kafkajs';
-import { SchemaRegistry } from '@kafkajs/confluent-schema-registry';
-import { KAFKA_CONFIG, SCHEMA_REGISTRY_CONFIG, TOPICS, CONSUMER_CONFIG } from './config';
-import { Order, RetryMetadata } from './types';
+import { Kafka, Consumer, EachMessagePayload, logLevel } from "kafkajs";
+import { SchemaRegistry } from "@kafkajs/confluent-schema-registry";
+import {
+  KAFKA_CONFIG,
+  SCHEMA_REGISTRY_CONFIG,
+  TOPICS,
+  CONSUMER_CONFIG,
+} from "./config";
+import { Order, RetryMetadata } from "./types";
 
 class OrderConsumer {
   private kafka: Kafka;
@@ -29,7 +34,7 @@ class OrderConsumer {
   async connect(): Promise<void> {
     await this.consumer.connect();
     await this.producer.connect();
-    console.log('✓ Consumer connected to Kafka');
+    console.log("✓ Consumer connected to Kafka");
   }
 
   private async decodeMessage(encodedValue: Buffer): Promise<Order> {
@@ -37,7 +42,7 @@ class OrderConsumer {
       const decodedValue = await this.registry.decode(encodedValue);
       return decodedValue as Order;
     } catch (error) {
-      console.error('Error decoding message:', error);
+      console.error("Error decoding message:", error);
       throw error;
     }
   }
@@ -61,12 +66,14 @@ class OrderConsumer {
   }
 
   private async sendToRetryTopic(
-    message: EachMessagePayload['message'],
+    message: EachMessagePayload["message"],
     error: Error
   ): Promise<void> {
     const retryCount = this.getRetryCount(message.headers) + 1;
 
-    console.log(`⚠️  Sending to retry topic (attempt ${retryCount}/${CONSUMER_CONFIG.maxRetries})`);
+    console.log(
+      `⚠️  Sending to retry topic (attempt ${retryCount}/${CONSUMER_CONFIG.maxRetries})`
+    );
 
     await this.producer.send({
       topic: TOPICS.ORDERS_RETRY,
@@ -86,11 +93,13 @@ class OrderConsumer {
     });
 
     // Wait before retrying
-    await new Promise((resolve) => setTimeout(resolve, CONSUMER_CONFIG.retryDelayMs));
+    await new Promise((resolve) =>
+      setTimeout(resolve, CONSUMER_CONFIG.retryDelayMs)
+    );
   }
 
   private async sendToDLQ(
-    message: EachMessagePayload['message'],
+    message: EachMessagePayload["message"],
     error: Error
   ): Promise<void> {
     console.log(`❌ Max retries exceeded. Sending to DLQ...`);
@@ -123,11 +132,13 @@ class OrderConsumer {
   private async processOrder(order: Order): Promise<void> {
     // Simulate potential processing errors (10% chance)
     if (Math.random() < 0.1) {
-      throw new Error('Simulated temporary processing error');
+      throw new Error("Simulated temporary processing error");
     }
 
     // Process the order
-    console.log(`✓ Processing order: ID=${order.orderId}, Product=${order.product}, Price=$${order.price}`);
+    console.log(
+      `✓ Processing order: ID=${order.orderId}, Product=${order.product}, Price=$${order.price}`
+    );
 
     // Update running average
     this.updateRunningAverage(order.price);
@@ -142,7 +153,6 @@ class OrderConsumer {
 
       // Process the order
       await this.processOrder(order);
-
     } catch (error) {
       const err = error as Error;
       console.error(`\n❌ Error processing message:`, err.message);
@@ -172,7 +182,9 @@ class OrderConsumer {
       fromBeginning: false,
     });
 
-    console.log(`✓ Subscribed to topics: ${TOPICS.ORDERS}, ${TOPICS.ORDERS_RETRY}`);
+    console.log(
+      `✓ Subscribed to topics: ${TOPICS.ORDERS}, ${TOPICS.ORDERS_RETRY}`
+    );
   }
 
   async run(): Promise<void> {
@@ -182,13 +194,13 @@ class OrderConsumer {
       },
     });
 
-    console.log('✓ Consumer is running...\n');
+    console.log("✓ Consumer is running...\n");
   }
 
   async disconnect(): Promise<void> {
     await this.consumer.disconnect();
     await this.producer.disconnect();
-    console.log('✓ Consumer disconnected');
+    console.log("✓ Consumer disconnected");
   }
 
   getStatistics() {
@@ -208,22 +220,21 @@ async function main() {
     await consumer.connect();
     await consumer.subscribe();
     await consumer.run();
-
   } catch (error) {
-    console.error('Error in consumer:', error);
+    console.error("Error in consumer:", error);
     await consumer.disconnect();
     process.exit(1);
   }
 }
 
 // Handle graceful shutdown
-process.on('SIGINT', async () => {
-  console.log('\nShutting down consumer...');
+process.on("SIGINT", async () => {
+  console.log("\nShutting down consumer...");
   process.exit(0);
 });
 
-process.on('SIGTERM', async () => {
-  console.log('\nShutting down consumer...');
+process.on("SIGTERM", async () => {
+  console.log("\nShutting down consumer...");
   process.exit(0);
 });
 
