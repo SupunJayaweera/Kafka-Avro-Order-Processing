@@ -73,7 +73,7 @@ class OrderConsumer {
     const retryCount = this.getRetryCount(message.headers) + 1;
 
     console.log(
-      `⚠️  Sending to retry topic (attempt ${retryCount}/${CONSUMER_CONFIG.maxRetries})`
+      `Sending to retry topic (attempt ${retryCount}/${CONSUMER_CONFIG.maxRetries})`
     );
 
     await this.producer.send({
@@ -103,7 +103,7 @@ class OrderConsumer {
     message: EachMessagePayload["message"],
     error: Error
   ): Promise<void> {
-    console.log(`\n❌ Max retries exceeded. Sending to DLQ...`);
+    console.log(`\nMax retries exceeded. Sending to DLQ...`);
 
     const metadata: RetryMetadata = {
       retryCount: this.getRetryCount(message.headers),
@@ -127,7 +127,7 @@ class OrderConsumer {
       ],
     });
 
-    console.log(`✓ Message sent to DLQ\n`);
+    console.log(`Message sent to DLQ\n`);
   }
 
   private async processOrder(order: Order): Promise<void> {
@@ -138,7 +138,7 @@ class OrderConsumer {
       if (Math.random() < 0.05) {
         this.failedOrderIds.add(order.orderId);
         console.log(
-          `🔴 Order ${order.orderId} marked to always fail (for DLQ demo)`
+          `Order ${order.orderId} marked to always fail (for DLQ demo)`
         );
       }
     }
@@ -155,7 +155,7 @@ class OrderConsumer {
 
     // Process the order
     console.log(
-      `✓ Processing order: ID=${order.orderId}, Product=${order.product}, Price=$${order.price}`
+      `Processing order: ID=${order.orderId}, Product=${order.product}, Price=$${order.price}`
     );
 
     // Update running average
@@ -173,7 +173,7 @@ class OrderConsumer {
       await this.processOrder(order);
     } catch (error) {
       const err = error as Error;
-      console.error(`\n❌ Error processing message:`, err.message);
+      console.error(`\nError processing message:`, err.message);
 
       const retryCount = this.getRetryCount(message.headers);
 
@@ -201,7 +201,7 @@ class OrderConsumer {
     });
 
     console.log(
-      `✓ Subscribed to topics: ${TOPICS.ORDERS}, ${TOPICS.ORDERS_RETRY}`
+      `Subscribed to topics: ${TOPICS.ORDERS}, ${TOPICS.ORDERS_RETRY}`
     );
   }
 
@@ -212,13 +212,13 @@ class OrderConsumer {
       },
     });
 
-    console.log("✓ Consumer is running...\n");
+    console.log("Consumer is running...\n");
   }
 
   async disconnect(): Promise<void> {
     await this.consumer.disconnect();
     await this.producer.disconnect();
-    console.log("✓ Consumer disconnected");
+    console.log("Consumer disconnected");
   }
 
   getStatistics() {
