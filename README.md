@@ -2,28 +2,6 @@
 
 A production-ready Kafka-based order processing system with Avro serialization, real-time aggregation, retry logic, and Dead Letter Queue (DLQ) support. Built with Node.js and TypeScript.
 
-## 🚀 Features
-
-- **Avro Serialization**: Messages are serialized using Apache Avro schema for efficient data transfer
-- **Real-time Aggregation**: Calculates running average of order prices in real-time
-- **Retry Logic**: Automatic retry mechanism for temporary failures (up to 3 attempts with 2s delay)
-- **Dead Letter Queue (DLQ)**: Failed messages after max retries are preserved in DLQ for investigation
-- **Schema Registry**: Integration with Confluent Schema Registry for schema management
-- **Monitoring**: Kafka UI dashboard for visual monitoring and debugging
-
-## 📋 Prerequisites
-
-Before you begin, ensure you have the following installed on your system:
-
-- **Docker Desktop** (v20.10 or higher)
-  - Windows: [Download Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
-  - Mac: [Download Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-  - Linux: [Install Docker Engine](https://docs.docker.com/engine/install/)
-- **Docker Compose** (usually included with Docker Desktop)
-- **Node.js** (v16 or higher) - [Download from nodejs.org](https://nodejs.org/)
-- **npm** (comes with Node.js) or **yarn**
-- **Git** (for cloning the repository)
-
 ## 📦 Installation & Setup
 
 Follow these steps to set up the project on your local machine:
