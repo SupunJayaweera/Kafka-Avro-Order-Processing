@@ -67,3 +67,9 @@ Open the web browser and navigate to:
 ```
 http://localhost:8080
 ```
+
+**Start Producer (Terminal 1)**
+
+   ```bash
+   npm run producer
+   ```
