@@ -16,6 +16,7 @@ class OrderConsumer {
   private runningTotal: number = 0;
   private orderCount: number = 0;
   private runningAverage: number = 0;
+  private failedOrderIds: Set<string> = new Set(); // Track orders that should always fail
 
   constructor() {
     this.kafka = new Kafka({
@@ -102,7 +103,7 @@ class OrderConsumer {
     message: EachMessagePayload["message"],
     error: Error
   ): Promise<void> {
-    console.log(`Max retries exceeded. Sending to DLQ...`);
+    console.log(`\nMax retries exceeded. Sending to DLQ...`);
 
     const metadata: RetryMetadata = {
       retryCount: this.getRetryCount(message.headers),
@@ -126,11 +127,28 @@ class OrderConsumer {
       ],
     });
 
-    console.log(`Message sent to DLQ`);
+    console.log(`Message sent to DLQ\n`);
   }
 
   private async processOrder(order: Order): Promise<void> {
-    // Simulate potential processing errors (10% chance)
+    // For demo purposes: Mark some orders to always fail
+    // This ensures we can demonstrate DLQ
+    if (!this.failedOrderIds.has(order.orderId)) {
+      // 5% chance an order will be marked to always fail
+      if (Math.random() < 0.05) {
+        this.failedOrderIds.add(order.orderId);
+        console.log(
+          `Order ${order.orderId} marked to always fail (for DLQ demo)`
+        );
+      }
+    }
+
+    // If this order is marked to fail, always throw error
+    if (this.failedOrderIds.has(order.orderId)) {
+      throw new Error("Persistent processing error - will go to DLQ");
+    }
+
+    // Normal random failures (10% chance)
     if (Math.random() < 0.1) {
       throw new Error("Simulated temporary processing error");
     }
