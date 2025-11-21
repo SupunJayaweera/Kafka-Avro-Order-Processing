@@ -73,3 +73,11 @@ http://localhost:8080
    ```bash
    npm run producer
    ```
+
+**Start Consumer (Terminal 2)**
+
+   ```bash
+   npm run consumer
+   ```
+
+
