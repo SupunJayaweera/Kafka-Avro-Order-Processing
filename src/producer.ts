@@ -29,7 +29,7 @@ class OrderProducer {
 
   async connect(): Promise<void> {
     await this.producer.connect();
-    console.log("✓ Producer connected to Kafka");
+    console.log("Producer connected to Kafka");
 
     // Register Avro schema
     await this.registerSchema();
@@ -42,7 +42,7 @@ class OrderProducer {
     try {
       const { id } = await this.registry.register(schema);
       this.schemaId = id;
-      console.log(`✓ Schema registered with ID: ${id}`);
+      console.log(`Schema registered with ID: ${id}`);
     } catch (error) {
       console.error("Error registering schema:", error);
       throw error;
@@ -85,7 +85,7 @@ class OrderProducer {
         ],
       });
 
-      console.log(`✓ Produced order: ${JSON.stringify(order)}`);
+      console.log(`Produced order: ${JSON.stringify(order)}`);
     } catch (error) {
       console.error("Error producing message:", error);
       throw error;
@@ -110,7 +110,7 @@ class OrderProducer {
 
   async disconnect(): Promise<void> {
     await this.producer.disconnect();
-    console.log("✓ Producer disconnected");
+    console.log("Producer disconnected");
   }
 }
 
