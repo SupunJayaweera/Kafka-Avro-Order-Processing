@@ -7,6 +7,8 @@
     "build": "tsc",
     "producer": "ts-node src/producer.ts",
     "consumer": "ts-node src/consumer.ts",
+    "consumer:dlq-demo": "ts-node src/consumer-dlq-demo.ts",
+    "send-dlq-test": "ts-node src/send-dlq-test.ts",
     "dev:producer": "nodemon --exec ts-node src/producer.ts",
     "dev:consumer": "nodemon --exec ts-node src/consumer.ts",
     "start": "node dist/index.js"
